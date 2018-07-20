@@ -93,7 +93,7 @@ def _conv2d(op,grad):
 # In[7]:
 
 #PARAMETERS
-num_epochs=50
+num_epochs=65
 batch=1000
 iterations=1000
 no_of_classes=10
@@ -198,8 +198,8 @@ override_grad = tf.gradients(cross_entropy, images)
 
 # In[20]:
 
-train_op_bp = tf.train.AdamOptimizer(1e-6).minimize(cost_bp)
-train_op_fa=tf.train.AdamOptimizer(1e-6).minimize(cost)
+train_op_bp = tf.train.AdamOptimizer(1e-5).minimize(cost_bp)#changed learning rate from 1e-6
+train_op_fa=tf.train.AdamOptimizer(1e-5).minimize(cost)
 
 
 # In[ ]:
