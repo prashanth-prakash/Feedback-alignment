@@ -93,7 +93,7 @@ def _conv2d(op,grad):
 # In[7]:
 
 #PARAMETERS
-num_epochs=65
+num_epochs=150
 batch=1000
 iterations=1000
 no_of_classes=10
