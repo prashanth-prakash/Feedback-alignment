@@ -69,7 +69,7 @@ def _conv2d(op,grad):
 # In[5]:
 
 #PARAMETERS
-num_epochs=100
+num_epochs=150
 batch=100
 iterations=1000 #per epoch
 no_of_classes=10
@@ -160,8 +160,8 @@ override_grad = tf.gradients(cross_entropy, images)
 
 # In[10]:
 
-train_op_bp = tf.train.MomentumOptimizer(learning_rate=0.00000001,momentum=0.9).minimize(cost_bp)
-train_op_fa=tf.train.MomentumOptimizer(learning_rate=0.00000001,momentum=0.9).minimize(cost)
+train_op_bp = tf.train.MomentumOptimizer(learning_rate=0.0000001,momentum=0.9).minimize(cost_bp)
+train_op_fa=tf.train.MomentumOptimizer(learning_rate=0.0000001,momentum=0.9).minimize(cost)
 
 
 # In[11]:
