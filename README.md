@@ -3,4 +3,10 @@ Back propagation is perhaps one of the most iconic algorithms that has helped br
 
 Recently, a paper titled "Random synaptic feedback weights support error backpropagation for deep learning" claimed that the forward and backward weights need not be symmetric. In fact, the backward weights can be a random weight matrix. This method surprisingly does great at learning almost as good as back propagation. 
 
-This new algorithm called Random Feedback Alignment has been implemented in this repository. Feedforward and Convolutional neural networks have been implemented to perform back propagation and random feedback alignment.
+This new algorithm called Random Feedback Alignment has been implemented in this repository. Feedforward and Convolutional neural networks have been investigated. Three different datasets were investigated:
+
+1. Synthetic data: This data was made using a bunch of random matricies.
+2. MNIST data
+3. CIFAR-10
+
+
