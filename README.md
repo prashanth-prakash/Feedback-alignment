@@ -9,4 +9,4 @@ This new algorithm called Random Feedback Alignment has been implemented in this
 2. MNIST data
 3. CIFAR-10
 
-
+The filed titled "ANALYSIS-" contain the results.
