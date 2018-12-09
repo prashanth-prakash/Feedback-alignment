@@ -4,7 +4,9 @@
 # In[1]:
 
 
-import tensorflow as tf 
+import tensorflow as tf
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
 import numpy as np 
 import pickle
 import numpy.random as rng
@@ -162,7 +164,7 @@ store_err_bp=[]
 store_err_fa=[]
 acc_fa=[]
 acc_bp=[]
-with tf.Session() as sess:
+with tf.Session(config=config) as sess:
     sess.run(tf.global_variables_initializer())
     for count in range(iterations):
         batch_no=np.random.randint(0,X.shape[0],size=batch)

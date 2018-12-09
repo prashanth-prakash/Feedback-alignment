@@ -1,20 +1,13 @@
-
-# coding: utf-8
-
-# In[1]:
-
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
-import tensorflow as tf 
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+import tensorflow as tf
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
 import numpy as np 
 import pickle
 import numpy.random as rng
-
-
-
-# # Load Training Data 
-
-# In[2]:
+import matplotlib.pyplot as plt
+from scipy.signal import lfilter
 
 def load_data(file_no):
     path='/home/prashanth/cifar-10-batches-py/data_batch_'+str(file_no)
@@ -28,11 +21,6 @@ def load_data(file_no):
     Y_hot=np.eye(no_of_classes)[Y]
     return X,Y_hot
 
-
-# # Load Testing Data
-
-# In[3]:
-
 fo_tst=open('/home/prashanth/cifar-10-batches-py/test_batch','rb')
 dict=pickle.load(fo_tst,encoding='bytes')
 X_tst=dict[b'data']
@@ -40,14 +28,6 @@ Y_tst=dict[b'labels']
 fo_tst.close
 X_tst=X_tst.reshape((len(X_tst),3,32,32)).transpose(0,2,3,1).astype("uint8")
 Y_tst=np.array(Y_tst)
-
-
-# In[4]:
-
-X_tst.shape
-
-
-# In[5]:
 
 def forward_conv(height,width,inshape,outshape,input):
     weights=tf.Variable(rng.randn(height,width,inshape,outshape), dtype = tf.float32,name='conv_weights') #constant
@@ -75,9 +55,6 @@ def fc_fc(rows,columns,layers):
 def activation(layer):
     return tf.nn.relu(layer)
 
-
-# In[6]:
-
 @tf.RegisterGradient("CustomConv")
 def _conv2d(op,grad):
     print("in override backprop")
@@ -89,11 +66,8 @@ def _conv2d(op,grad):
     g_filter = tf.nn.conv2d_backprop_filter(input, filter_sizes = f_shape, out_backprop = grad, strides = [1,1,1,1], padding = "SAME")
     return g_input, g_filter
 
-
-# In[7]:
-
 #PARAMETERS
-num_epochs=150
+num_epochs=3
 batch=1000
 iterations=1000
 no_of_classes=10
@@ -103,11 +77,6 @@ Y_hot_tst=np.eye(no_of_classes)[Y_tst]
 
 images=tf.placeholder(tf.float32,shape=(None,32,32,3),name='images')
 true_labels=tf.placeholder(tf.float32,shape=(None,10),name='true_labels')
-
-
-# # Random FeedBack
-
-# In[8]:
 
 #LAYER1
 filter_random1 = tf.Variable(rng.randn(5,5,3,32), dtype = tf.float32,name='random_filter1')
@@ -147,11 +116,6 @@ cross_entropy=tf.nn.softmax_cross_entropy_with_logits(logits=
                                   output,labels=true_labels)
 cost = tf.reduce_mean(cross_entropy)
 
-
-# # Back Prop
-
-# In[9]:
-
 # filter_conv_bp=tf.Variable(rng.randn(5,5,3,16), dtype = tf.float32)
 
 #LAYER 1
@@ -181,29 +145,16 @@ cross_entropy_bp=tf.nn.softmax_cross_entropy_with_logits(logits=
                                   output_bp,labels=true_labels)
 cost_bp=tf.reduce_mean(cross_entropy_bp)
 
-
-# In[10]:
-
 accuracy_fa=tf.reduce_mean(tf.cast(tf.equal(tf.argmax(output,1),tf.argmax(true_labels,1)),tf.float32))
 accuracy_bp=tf.reduce_mean(tf.cast(tf.equal(tf.argmax(output_bp,1),tf.argmax(true_labels,1)),tf.float32))
-
-
-# In[11]:
 
 #BP gradients
 bp_grad = tf.gradients(cross_entropy_bp, images)
 
 override_grad = tf.gradients(cross_entropy, images)
 
-
-# In[20]:
-
-train_op_bp = tf.train.AdamOptimizer(1e-4).minimize(cost_bp)#changed learning rate from 1e-6
-train_op_fa=tf.train.AdamOptimizer(1e-4).minimize(cost)
-
-
-# In[ ]:
-
+train_op_bp = tf.train.AdamOptimizer(learning_rate=0.0000001).minimize(cost_bp)
+train_op_fa=tf.train.AdamOptimizer(learning_rate=0.0000001).minimize(cost)
 store_err_bp=[]
 store_err_fa=[]
 acc_fa=[]
@@ -216,7 +167,7 @@ print("\nNo of epochs=",num_epochs)
 print("\nBatch size=",batch)
 print("\nIterations per epoch=",iterations)
 
-with tf.Session() as sess:
+with tf.Session(config=config) as sess:
     sess.run(tf.global_variables_initializer())
     for epoch in range(num_epochs):
         print("\n\t\t\tEPOCH NO:",epoch+1)
@@ -267,15 +218,6 @@ with tf.Session() as sess:
         
         print("\nAt the end of EPOCH:",epoch+1)
         print("Testing Accuracy:\nBack Propagation",tst_bp,"\tRandom Feedback:",tst_fa)
-
-
-# In[ ]:
-
-with open('Analysis-CIFAR10_1e-4.pkl','wb') as f:
+     
+with open('Analysis-CIFAR10.pkl','wb') as f:
     pickle.dump([store_err_bp,store_err_fa,acc_fa,acc_bp,testing_fa,testing_bp],f,protocol=2)
-
-
-# In[ ]:
-
-
-

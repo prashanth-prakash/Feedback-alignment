@@ -5,7 +5,9 @@
 
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
-import tensorflow as tf 
+import tensorflow as tf
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
 import numpy as np 
 import numpy.random as rng
 import pickle
@@ -178,7 +180,7 @@ print("\nNo of epochs=",num_epochs)
 print("\nBatch size=",batch)
 print("\nIterations per epoch=",iterations)
 
-with tf.Session() as sess:
+with tf.Session(config=config) as sess:
     sess.run(tf.global_variables_initializer())
     for epoch in range(num_epochs):
         print("\n\t\t\tEPOCH NO:",epoch+1)
